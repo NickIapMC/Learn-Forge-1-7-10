@@ -1,0 +1,71 @@
+body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 4vw;
+}
+
+h2 {
+  font-family: "Source Sans Pro", sans-serif;
+  font-size: 2vw;
+}
+
+p {
+    font-family: "Source Sans Pro", sans-serif;
+    font-size: 1vw;
+}
+
+code {
+  background-color: #F5F5F5;
+}
+
+hr {
+    height: 3px;
+    background-color: blue;
+    color: blue;
+    margin-top: 4vw;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    color: blue;
+}
+
+#tabs {
+  width: 100vw;
+  height: 5vw;
+  background-color: #00004d;
+}
+
+.java-code {
+    margin: auto;
+    margin-top: 2vw;
+    margin-bottom: 2vw;
+    font-size: 1vw;
+    background-color: #F5F5F5;
+    width: 70%;
+    padding-left: 2vw;
+    padding-top: 0.25vw;
+    border-left: 5px solid blue;
+    font-family: "Consolas";
+    overflow-x: scroll;
+}
+
+.tab {
+  background-color: transparent;
+  border: none;
+  font-size: 3vw;
+  height: 100%;
+  width: 33%;
+  padding: 0;
+  font-family: "Source Sans Pro", sans-serif;
+  color: white;
+}

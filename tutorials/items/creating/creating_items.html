@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Learn Forge 1.7.10</title>
+        <link href="/style.css" type="text/css" rel="stylesheet">
+        <link href="creating.css" type="text/css" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+        <script src="/code/code_formatter.js" rel="script" type="text/javascript"></script>
+        <link rel="shortcut icon" type="image/png" href="/media/images/favicon.png"/>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="zNick_">
+    </head>
+
+    <body onload="syntaxHighlight();">
+        <div id="tabs">
+          <button class="tab">Home</button>
+          <button class="tab">Tutorials</button>
+          <button class="tab">Reference</button>
+        </div>
+
+        <div id="text">
+            <h1>Page Contents</h1>
+            <ul>
+                <h2><li><a href="#creating">Creating Custom Items</a></li></h2>
+                <h2><li><a href="#customization">Customization & Useful Methods</a></li></h2>
+                <ul>
+                    <h2><li><a href="#name-color">Changing Item Name Color</a></li></h2>
+                    <h2><li>Adding Item Description</li></h2>
+                </ul>
+                <h2><li>Functions on Item Right-Click</li></h2>
+            </ul>
+            <hr>
+
+            <h1 id="creating">Creating Custom Items</h1>
+            <p>One of the most basic and fundamental parts of a mod is creating custom items. To start, create a new class with the name of your item that extends the Item class, and create an empty constructor. </p>
+
+            <pre><div class="java-code">
+public class MagicWand extends Item {
+
+    public MagicWand() {
+
+    }
+}
+            </div></pre>
+
+            <p>The constructor is called once when the item is first initialized. All properties of the item that aren't going to change like its name and texture should be set here:</p>
+            <div class="java-code"><pre>
+public class MagicWand extends Item {
+
+    public MagicWand() {
+        this.setUnlocalizedName("magic_wand");
+        this.setTextureName("mag:magic_wand");
+    }
+}
+            </pre></div>
+
+            <p>There's a couple things to note here. The unlocalized name of the item is the name you should register it into the game with, so it has to be unique, meaning two items shouldn't have the same unlocalized name. It's also the name to be used in the "give" command, so it should be recognizable as the item. Generally the conventional format is a completely lowercase string with underscores instead of spaces or dashes.</p>
+
+            <p>As for the texture name, it should be your mod ID, colon, and then the name of the file of the texture. So in this case my file would be called something like "magic_wand.png". Standard textures are 16x16, though you can make it almost any size you want. Generally I would recommend keeping them square and to not go over 256x256 pixels. To insert your textures, create a directory at <code>src/main/resources/assets/modid/textures/items</code>. The directory must be named exactly as that, with no capitals, with the one exception that the "modid" should match your modid <i>exactly</i>. If you put your item textures in that folder, they will be automatically found when using the <code>modid:texture_name</code> syntax. </p>
+
+            <p>However, in bigger mods it's very beneficial to not keep all of your textures in one folder. To keep things organized, <mark>I highly recommend keeping your textures in various nested folders</mark>. So, you might have separate folders like <code>items/wands/</code> and <code>items/armor/</code>. To tell your code to recognize this, simply change the unlocalized name argument:</p>
+
+            <div class="java-code"><pre>
+public class MagicWand extends Item {
+
+    public MagicWand() {
+        this.setUnlocalizedName("magic_wand");
+        this.setTextureName(MagicWands.MODID + ":firstfolder/secondfolder/filename");
+    }
+}
+            </pre></div>
+
+            <p>Notice that I also changed the <code>mag</code> to <code>MagicWands.MODID</code>. Any time you reference your mod ID, you should use this instead of writing it out. That way, if you ever want to change your mod ID, you only have to do it once in your main class and it won't mess anything up. </p>
+            <p>In essence, that is all you need for an extremely basic item. All that's left is to register it into the game. Most items you have won't be this simple, because an item that's coded like that does nothing besides exist and have a texture. For more information on how to make your item more customized, read on.</p>
+
+            <hr>
+            <h1 id="customization">Customization & Useful Methods</h1>
+
+            <p>There are a number of useful methods in the <code>Item</code> class that you can override to add more customization to your item.</p>
+
+            <h2 id="name-color">Changing Color of Item Name</h2>
+            <p>First let's talk about the <code>getRarity()</code> method: </p>
+
+              <div class="java-code"><pre>
+public class MagicWand extends Item {
+
+    publicm MagicWand() {
+        this.setUnlocalizedName("magic_wand");
+        this.setTextureName(MagicWands.MODID + ":firstfolder/secondfolder/filename");
+    }
+
+    @Override
+    public EnumRarity getRarity(ItemStack stack) {
+        return EnumRarity.rare;
+    }
+}
+            </pre></div>
+
+            <p>The <code>getRarity</code> function returns the "rarity" of the item. In effect, all this actually does is change the color of the item name. The <code>EnumRarity</code> enum contains 4 different default rarities: common, uncommon, rare, and epic, with their respective colors being white, yellow, cyan, and purple. Each <code>EnumRarity</code> has a color from the <code>EnumChatFormatting</code> class. Because it's an enum, there's no easy way to create your own rarities to display different colors of the item name outside of those default 4. That being said, it can be done. There are two main methods I would recommend to do this. The first method is potentially unstable but more practical, whereas the second method is safer but less convenient. For the first method, you can copy and paste these useful little functions:</p>
+
+            <div class="java-code"><pre>
+private static EnumRarity createRarity(EnumChatFormatting color) {
+    try {
+        Constructor<?> constructor = Unsafe.class.getDeclaredConstructors()[0];
+        constructor.setAccessible(true);
+        Unsafe unsafe = (Unsafe) constructor.newInstance();
+        EnumRarity rarity = (EnumRarity) unsafe.allocateInstance(EnumRarity.class);
+
+        Field rarityField = EnumRarity.class.getDeclaredField("rarityColor");
+        makeAccessible(rarityField);
+        rarityField.set(rarity, color);
+        return rarity;
+    }
+
+    catch(Exception e) {
+        throw new RuntimeException(e);
+    }
+}
+
+private static void makeAccessible(Field field) throws Exception {
+    field.setAccessible(true);
+    Field modifiersField = Field.class.getDeclaredField("modifiers");
+    modifiersField.setAccessible(true);
+    modifiersField.setInt(field, field.getModifiers() & ~ Modifier.FINAL);
+}
+          </pre></div>
+
+          <p>There's a lot going on here, especially if you don't know much about Java reflection. You don't have to worry too much about the gory details&mdash; it's all here for you. If this gives you an error, don't worry. Some IDEs, like eclipse, require you to manually import certiain packages. The <code>Unsafe</code> class belongs to the <code>sun.misc</code> package. To enable it in Eclipse, follow this answer: To use it, simply call something along the lines of:</p>
+
+          <div class="java-code"><pre>
+public static final EnumRarity RED_RARITY = createRarity(EnumChatFormatting.RED);
+        </pre></div>
+
+        <p>Then whenever you want an item with a red name, you just override the <code>getRarity</code> method like so:</p>
+        <div class="java-code"><pre>
+public class MagicWand extends Item {
+
+    public MagicWand() {
+        this.setUnlocalizedName("magic_wand");
+        this.setTextureName(MagicWands.MODID + ":firstfolder/secondfolder/filename");
+    }
+
+    @Override
+    public EnumRarity getRarity(ItemStack stack) {
+        return RED_RARITY;
+    }
+}
+        </pre></div>
+
+        <h2>Adding Item Descriptions</h2>
+        </div>
+    </body>
+</html>
