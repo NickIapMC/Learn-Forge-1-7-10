@@ -32,17 +32,43 @@ hr {
 
 a {
     text-decoration: none;
-    color: black;
+    color: white;
+    font-size: 1vw;
 }
 
 a:hover {
-    color: blue;
+    color: #DAA765;
+}
+
+li {
+    padding-bottom: 0.5vw;
 }
 
 #tabs {
   width: 100vw;
   height: 5vw;
-  background-color: #00004d;
+  background-color: #27303E;
+}
+
+#pagenav {
+    position: fixed;
+    width: 17vw;
+    margin-left: 3vw;
+    margin-top: 5vw;
+    color: white;
+    background-color: #323C4E;
+    font-family: "Consolas";
+    padding-right: 1vw;
+}
+
+#pagenav-heading {
+    font-size: 2vw;
+    background-color: #27303E;
+    text-align: center;
+    width: calc(100% + 1vw);
+    display: inline-block;
+    padding-top: 0.5vw;
+    padding-bottom: 0.5vw;
 }
 
 .java-code {
@@ -54,7 +80,7 @@ a:hover {
     width: 70%;
     padding-left: 2vw;
     padding-top: 0.25vw;
-    border-left: 5px solid blue;
+    border-left: 5px solid #323C4E;
     font-family: "Consolas";
     overflow-x: scroll;
 }

@@ -5,7 +5,9 @@
         <link href="/style.css" type="text/css" rel="stylesheet">
         <link href="creating.css" type="text/css" rel="stylesheet">
         <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro' rel='stylesheet' type='text/css'>
+
         <script src="/code/code_formatter.js" rel="script" type="text/javascript"></script>
+
         <link rel="shortcut icon" type="image/png" href="/media/images/favicon.png"/>
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,19 +21,34 @@
           <button class="tab">Reference</button>
         </div>
 
-        <div id="text">
-            <h1>Page Contents</h1>
+        <div id="pagenav">
+            <span id="pagenav-heading">Page Contents</span>
             <ul>
-                <h2><li><a href="#creating">Creating Custom Items</a></li></h2>
-                <h2><li><a href="#customization">Customization & Useful Methods</a></li></h2>
+                <a href="#creating"><li>Creating Custom Items</li></a>
+                <a href="#customization"><li>Customization & Useful Methods</li></a>
                 <ul>
-                    <h2><li><a href="#name-color">Changing Item Name Color</a></li></h2>
-                    <h2><li>Adding Item Description</li></h2>
+                    <a><href="#name-color"><li>Change Color of Item Name</li></a>
+                    <ul>
+                        <a><href="#custom-color"><li>Custom Colors</li></a>
+                    </ul>
+                    <a><href="#description"><li>Add Item Descriptions</li></a>
+                    <ul>
+                        <a><href="#custom-color"><li>Dynamic Descriptions</li></a>
+                    </ul>
                 </ul>
-                <h2><li>Functions on Item Right-Click</li></h2>
+                <a><href="#name-color"><li>Add Right-Click Functionality</li></a>
+                <a><href="#name-color"><li>Items with Durability</li></a>
+                <ul>
+                    <a><href="#name-color"><li>Armor</li></a>
+                    <a><href="#name-color"><li>Tools & Weapons</li></a>
+                    <a><href="#name-color"><li>Self-Repairing/Damaging Items</li></a>
+                </ul>
+                <a><href="#name-color"><li>Items with Animated Textures</li></a>
+                <a><href="#name-color"><li>Enchanted Items</li></a>
             </ul>
-            <hr>
+        </div>
 
+        <div id="text">
             <h1 id="creating">Creating Custom Items</h1>
             <p>One of the most basic and fundamental parts of a mod is creating custom items. To start, create a new class with the name of your item that extends the Item class, and create an empty constructor. </p>
 
