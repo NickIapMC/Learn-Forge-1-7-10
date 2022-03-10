@@ -25,18 +25,24 @@
             <span id="pagenav-heading">Page Contents</span>
             <ul>
                 <a href="#creating"><li>Creating Custom Items</li></a>
-                <a href="#customization"><li>Customization & Useful Methods</li></a>
+                <a href="#registering"><li>Registering Items</li></a>
                 <ul>
-                    <a><href="#name-color"><li>Change Color of Item Name</li></a>
+                    <a href="#registering-beginner"><li>Beginner Method</li></a>
+                    <a href="#registration-intermediate"><li>Intermediate Method</li></a>
+                    <a href="#registration-advanced"><li>Advanced Method</li></a>
+                </ul>
+                <a href="#customization"><li>Item Customization</li></a>
+                <ul>
+                    <a href="#name-color"><li>Change Color of Item Name</li></a>
                     <ul>
-                        <a><href="#custom-color"><li>Custom Colors</li></a>
+                        <a href="#custom-colors"><li>Custom Colors</li></a>
                     </ul>
-                    <a><href="#description"><li>Add Item Descriptions</li></a>
+                    <a href="#description"><li>Add Item Descriptions</li></a>
                     <ul>
-                        <a><href="#custom-color"><li>Dynamic Descriptions</li></a>
+                        <a href="#dynamic"><li>Dynamic Descriptions</li></a>
                     </ul>
                 </ul>
-                <a><href="#name-color"><li>Add Right-Click Functionality</li></a>
+                <a href="#right-click"><li>Add Right-Click Functionality</li></a>
                 <a><href="#name-color"><li>Items with Durability</li></a>
                 <ul>
                     <a><href="#name-color"><li>Armor</li></a>
@@ -44,7 +50,13 @@
                     <a><href="#name-color"><li>Self-Repairing/Damaging Items</li></a>
                 </ul>
                 <a><href="#name-color"><li>Items with Animated Textures</li></a>
+                <a><href="#name-color"><li>Food Items</li></a>
+                <ul>
+                    <a><href="#name-color"><li>Food with effects</li></a>
+                    <a><href="#name-color"><li>Drinks</li></a>
+                </ul>
                 <a><href="#name-color"><li>Enchanted Items</li></a>
+                <a><href="#name-color"><li>Other Useful Methods</li></a>
             </ul>
         </div>
 
@@ -62,7 +74,7 @@ public class MagicWand extends Item {
             </div></pre>
 
             <p>The constructor is called once when the item is first initialized. All properties of the item that aren't going to change like its name and texture should be set here:</p>
-            <div class="java-code"><pre>
+            <pre><div class="java-code">
 public class MagicWand extends Item {
 
     public MagicWand() {
@@ -70,7 +82,7 @@ public class MagicWand extends Item {
         this.setTextureName("mag:magic_wand");
     }
 }
-            </pre></div>
+            </div></pre>
 
             <p>There's a couple things to note here. The unlocalized name of the item is the name you should register it into the game with, so it has to be unique, meaning two items shouldn't have the same unlocalized name. It's also the name to be used in the "give" command, so it should be recognizable as the item. Generally the conventional format is a completely lowercase string with underscores instead of spaces or dashes.</p>
 
@@ -78,7 +90,7 @@ public class MagicWand extends Item {
 
             <p>However, in bigger mods it's very beneficial to not keep all of your textures in one folder. To keep things organized, <mark>I highly recommend keeping your textures in various nested folders</mark>. So, you might have separate folders like <code>items/wands/</code> and <code>items/armor/</code>. To tell your code to recognize this, simply change the unlocalized name argument:</p>
 
-            <div class="java-code"><pre>
+            <pre><div class="java-code">
 public class MagicWand extends Item {
 
     public MagicWand() {
@@ -86,23 +98,267 @@ public class MagicWand extends Item {
         this.setTextureName(MagicWands.MODID + ":firstfolder/secondfolder/filename");
     }
 }
-            </pre></div>
+            </div></pre>
 
             <p>Notice that I also changed the <code>mag</code> to <code>MagicWands.MODID</code>. Any time you reference your mod ID, you should use this instead of writing it out. That way, if you ever want to change your mod ID, you only have to do it once in your main class and it won't mess anything up. </p>
             <p>In essence, that is all you need for an extremely basic item. All that's left is to register it into the game. Most items you have won't be this simple, because an item that's coded like that does nothing besides exist and have a texture. For more information on how to make your item more customized, read on.</p>
 
             <hr>
-            <h1 id="customization">Customization & Useful Methods</h1>
+
+            <h1 id="registering">Registering Items</h1>
+
+            <p>Creating an item won't make it actually appear into the game. You have to register the item into the game as well. There's a few different ways to register items into the game of varying complexity. Here I have 3 different methods that range in difficulty. The benefit is that the more complex solutions require less code or less manual registration of items. </p>
+
+            <h2 id="registering-beginner">Beginner Method - Manual Registration</h2>
+            <p>The most standard and simple method of registering items into the game is to simply register them manually one by one. First create a new class, call it something like <code>MagicWandsItems</code>. In that class, create an instance of your custom item class. </p>
+
+            <pre><div class="java-code">
+public class MagicWandsItems {
+    public static final Item MAGIC_WAND = new MagicWand();
+}
+            </div></pre>
+
+            <p>Note that it's <code>public static final</code>, so the name should be in capitals. Anywhere else in your code you want to check for a certain item, you'll use that instance. For example, if you want to check if the player is holding the item, youd do something along the lines of <code>if (player.getCurrentlyEquippedItem().getItem() == MagicWandsItems.MAGIC_WAND)</code>. That's why we make it public. Now in that class add a function called something like <code>register()</code> or <code>registerItems()</code>:</p>
+
+            <pre><div class="java-code">
+public class MagicWandsItems {
+    public static final Item MAGIC_WAND = new MagicWand();
+
+    public static void registerItems() {
+        GameRegistry.registerItem(MAGIC_WAND, "magic_wand");
+    }
+}
+            </div></pre>
+
+            <p>Then in your main mod class in your <code>preInit()</code> method, call the register method:</p>
+
+            <pre><div class="java-code">
+@EventHandler
+public void preInit(FMLInitializationEvent event) {
+    MagicWandItems.registerItems();
+}
+            </div></pre>
+
+            <p>That's all you need for the most basic item registration. If you start up your game now your item should exist in the game. However, even at the beginner level, you can make this a little easier on yourself. First, in your item class, change the item name instead of being a literal string to the item's unlocalized name:</p>
+
+            <pre><div class="java-code">
+public class MagicWandsItems {
+public static final Item MAGIC_WAND = new MagicWand();
+
+    public static void registerItems() {
+        GameRegistry.registerItem(MAGIC_WAND, MAGIC_WAND.getUnlocalizedName().substring(5));
+    }
+}
+            </div></pre>
+
+            <p>In general this will register the item with the unlocalized name we set when creating it. That way you won't have to retype the name. it's always good to avoid retyping as much as possible because it helps avoid typos and repetitive code. The <code>substring(5)</code> line is because of how the items are registered. Even though we set the unlocalized name to "magic_wand" the game actually changes that to "item.magic_wand". To remove those first 5 characters (the "item.") we use <code>substring(5)</code>. To make it even more efficient, we can create a little private helper function:</p>
+
+            <pre><div class="java-code">
+public class MagicWandsItems {
+public static final Item MAGIC_WAND = new MagicWand();
+
+    public static void registerItems() {
+        registerItem(MAGIC_WAND);
+    }
+
+    private static void registerItem(Item item) {
+        GameRegistry.registerItem(item, item.getUnlocalizedName().substring(5));
+    }
+}
+            </div></pre>
+
+            <p>And now any time we want to register an item we just put <code>registerItem(ITEM)</code> in our <code>registerItems</code> method. That way we don't have to retype the whole <code>item.getUnlocalizedName().substring(5)</code> stuff.</p>
+
+            <p>That's pretty much it for beginner item registering. If you're just making your first or second mod, I'd recommend this method. It's the easiest and the simplest to understand, especially if you don't know much about Java. This was the method I used myself for my first couple of mods before I started getting creative with my item registering and making more efficient methods. To learn about those, read on.</p>
+
+            <h2 id="registration-intermediate">Intermediate Method: Semi-Automatic Registration</h2>
+
+            <p>Next I'd like to show you a method I came up with to register items (or blocks or whatever else) a little bit more efficiently and automatically. This is the method I actually still use most commonly today because it requires the least amount of code. The beginning starts the same, however the <code>registerItems()</code> method is going to look a little more complicated:</p>
+
+            <pre><div class="java-code">
+public class MagicWandsItems {
+public static final Item MAGIC_WAND = new MagicWand();
+
+    public static void registerItems() {
+        for (Field field : MagicWandsItems.class.getDeclaredFields()) {
+            if (field.get(null) instanceof Item) {
+                Item item = (Item) field.get(null);
+                GameRegistry.registerItem(item, item.getUnlocalizedName().substring(5));
+            }
+        }
+    }
+}
+            </div></pre>
+
+            <p>This method uses something called <i>reflection</i>, which allows us to analyze our own code <i>with</i> code. In this case, we're looping through every variable that we declared in our Items class. Then we check if the variable is an <code>Item</code>, and if it is, we register it along with it's unlocalized name. This way you dont have to call a register method every time you make a new item, you just create an instance of the item and the method will register it for you. It may look more complicated than the previous method, but after having dozens of items in your class it'll save you many lines of code of just repeated calls of <code>GameRegistry.registerItem(...)</code>.</p>
+
+            <p>As I said before, this is the method I still use the most today and the one I would recommend the most to the average modder. It's concise and does the job. </p>
+
+            <h2 id="registration-advanced">Advanced Method: Fully Automatic Registration</h2>
+
+            <p>There is another method for registering items that I have used but it's significantly more complicated than the previous 2. The advantage of this method is that you write one class to handle the registration logic, and then your classes for registering items, biomes, blocks, or anything else, all use the logic of that one class and you don't have to rewrite it. That being said, if your mod only adds items for example, I highly recommend you use the previous method. The main benefit of this method is that it makes creating several registries much easier. So, if all you'd have is an item registry anyway, don't bother with it.</p>
+
+            <p>We start by creating an abstract <code>Registry</code> class with a single generic type parameter:</p>
+
+            <pre><div class="java-code">
+public abstract class Registry&lt;T&gt; {
+
+}
+            </div></pre>
+
+            <p>And then we add in the following abstract methods:</p>
+
+            <pre><div class="java-code">
+public abstract class Registry&lt;T&gt; {
+    public abstract Method getRegistryMethod();
+    public abstract Object[] getRegistryMethodArgs(T obj);
+}
+            </div></pre>
+
+            <p>We'll talk about what these two methods do when I actually show an implementation of this class for items. For now, continue by adding the following methods: </p>
+
+            <pre><div class="java-code">
+public abstract class Registry&lt;T&gt; {
+    public abstract Method getRegistryMethod();
+    public abstract Object[] getRegistryMethodArgs(T obj);
+    <strong>
+    protected Object getRegistryMethodObject() {
+        return null;
+    }
+
+    public void register() {
+        for (Field field : this.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            try {
+                this.getRegistryMethod().invoke(this.getRegistryMethodObject(), this.getRegistryMethodArgs((T) field.get(null)));
+            } catch(Exception e) {
+                continue;
+            }
+        }
+    }</strong>
+}
+            </div></pre>
+
+            <p>So yeah, I know there's a lot going on here. Bear with me. Next, add the following constructor:</p>
+
+            <pre><div class="java-code">
+public abstract class Registry&lt;T&gt; {
+    <strong>
+    private static final Set&lt;Registry&gt; REGISTRIES = new LinkedHashSet&lt;&gt;();
+
+    public Registry() {
+        REGISTRIES.add(this);
+    }</strong>
+
+    public abstract Method getRegistryMethod();
+    public abstract Object[] getRegistryMethodArgs(T obj);
+
+    protected Object getRegistryMethodObject() {
+        return null;
+    }
+
+    public void register() {
+        for (Field field : this.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            try {
+                this.getRegistryMethod().invoke(this.getRegistryMethodObject(), this.getRegistryMethodArgs((T) field.get(null)));
+            } catch(Exception e) {
+                continue;
+            }
+        }
+    }
+}
+            </div></pre>
+
+            <p>Lastly add a <code>registerAll()</code> method: </p>
+
+            <pre><div class="java-code">
+public abstract class Registry&lt;T&gt; {
+
+    private static final Set&lt;Registry&gt; REGISTRIES = new LinkedHashSet&lt;&gt;();
+
+    public Registry() {
+        REGISTRIES.add(this);
+    }
+
+    public abstract Method getRegistryMethod();
+    public abstract Object[] getRegistryMethodArgs(T obj);
+
+    protected Object getRegistryMethodObject() {
+        return null;
+    }
+
+    public void register() {
+        for (Field field : this.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            try {
+                this.getRegistryMethod().invoke(this.getRegistryMethodObject(), this.getRegistryMethodArgs((T) field.get(null)));
+            } catch(Exception e) {
+                continue;
+            }
+        }
+    }
+    <strong>
+    public static void registerAll() {
+        for (Registry registry : REGISTRIES) registry.register();
+    }</strong>
+}
+            </div></pre>
+
+            <p>And that's the completed <code>Registry</code> class. Phew, that's a lot. Now let's see how we actually implement it. As with before, create your <code>ItemRegistry</code> class, except this time it's going to be a subclass of <code>Registry&lt;Item&gt;</code>:</p>
+
+            <pre><div class="java-code">
+public class ItemRegistry extends Registry&lt;Item&gt; {
+
+    public static final Item MAGIC_WAND = new MagicWand();
+}
+            </div></pre>
+
+            <p>Now we have to implement the abstract methods:</p>
+
+            <pre><div class="java-code">
+public class ItemRegistry extends Registry&lt;Item&gt; {
+
+    public static final Item MAGIC_WAND = new MagicWand();
+
+    @Override
+    public Method getRegistryMethod() {
+        GameRegistry.class.getDeclaredMethod("registerItem", Item.class, String.class);
+    }
+
+    @Override
+    protected Object[] getRegistryMethodArgs(Item obj) {
+        return new Object[] {obj, obj.getUnlocalizedName().substring(5)};
+    }
+}
+            </div></pre>
+
+            <p>And you're essentially done. Whenever you want to register your items, put the following in your main mod class:</p>
+
+            <pre><div class="java-code">
+public static final ItemRegistry ITEMS = new ItemRegistry();
+
+@EventHandler
+public void preInit(FMLInitializationEvent event) {
+    Registry.registerAll();
+}
+            </div></pre>
+
+            <p>By simply creating the item registry, it's been added to the set of registries, and the <code>Registry.registerAll()</code> method will register it. Any other registries you create can follow this same procedure and will be registered with the one single call to <code>Registry.registerAll()</code>.</p>
+
+            <hr>
+
+            <h1 id="customization">Item Customization</h1>
 
             <p>There are a number of useful methods in the <code>Item</code> class that you can override to add more customization to your item.</p>
 
             <h2 id="name-color">Changing Color of Item Name</h2>
             <p>First let's talk about the <code>getRarity()</code> method: </p>
 
-              <div class="java-code"><pre>
+            <pre><div class="java-code">
 public class MagicWand extends Item {
 
-    publicm MagicWand() {
+    public MagicWand() {
         this.setUnlocalizedName("magic_wand");
         this.setTextureName(MagicWands.MODID + ":firstfolder/secondfolder/filename");
     }
@@ -112,11 +368,15 @@ public class MagicWand extends Item {
         return EnumRarity.rare;
     }
 }
-            </pre></div>
+            </div></pre>
 
-            <p>The <code>getRarity</code> function returns the "rarity" of the item. In effect, all this actually does is change the color of the item name. The <code>EnumRarity</code> enum contains 4 different default rarities: common, uncommon, rare, and epic, with their respective colors being white, yellow, cyan, and purple. Each <code>EnumRarity</code> has a color from the <code>EnumChatFormatting</code> class. Because it's an enum, there's no easy way to create your own rarities to display different colors of the item name outside of those default 4. That being said, it can be done. There are two main methods I would recommend to do this. The first method is potentially unstable but more practical, whereas the second method is safer but less convenient. For the first method, you can copy and paste these useful little functions:</p>
+            <p>The <code>getRarity</code> function returns the "rarity" of the item. In effect, all this actually does is change the color of the item name. The <code>EnumRarity</code> enum contains 4 different default rarities: common, uncommon, rare, and epic, with their respective colors being white, yellow, cyan, and purple. Each <code>EnumRarity</code> has a color from the <code>EnumChatFormatting</code> class.</p>
 
-            <div class="java-code"><pre>
+            <h2 id="custom-colors">Custom Colors</h2>
+
+            <p>Because it's an enum, there's no easy way to create your own rarities to display different colors of the item name outside of those default 4. That being said, it can be done. There are two main methods I would recommend to do this. The first method is potentially unstable but more practical, whereas the second method is safer but less convenient. For the first method, you can copy and paste these useful little functions:</p>
+
+            <pre><div class="java-code">
 private static EnumRarity createRarity(EnumChatFormatting color) {
     try {
         Constructor<?> constructor = Unsafe.class.getDeclaredConstructors()[0];
@@ -130,7 +390,7 @@ private static EnumRarity createRarity(EnumChatFormatting color) {
         return rarity;
     }
 
-    catch(Exception e) {
+    catch (Exception e) {
         throw new RuntimeException(e);
     }
 }
@@ -139,18 +399,18 @@ private static void makeAccessible(Field field) throws Exception {
     field.setAccessible(true);
     Field modifiersField = Field.class.getDeclaredField("modifiers");
     modifiersField.setAccessible(true);
-    modifiersField.setInt(field, field.getModifiers() & ~ Modifier.FINAL);
+    modifiersField.setInt(field, field.getModifiers() &amp; ~ Modifier.FINAL);
 }
-          </pre></div>
+          </div></pre>
 
           <p>There's a lot going on here, especially if you don't know much about Java reflection. You don't have to worry too much about the gory details&mdash; it's all here for you. If this gives you an error, don't worry. Some IDEs, like eclipse, require you to manually import certiain packages. The <code>Unsafe</code> class belongs to the <code>sun.misc</code> package. To enable it in Eclipse, follow this answer: To use it, simply call something along the lines of:</p>
 
-          <div class="java-code"><pre>
+          <pre><div class="java-code">
 public static final EnumRarity RED_RARITY = createRarity(EnumChatFormatting.RED);
-        </pre></div>
+        </div></pre>
 
         <p>Then whenever you want an item with a red name, you just override the <code>getRarity</code> method like so:</p>
-        <div class="java-code"><pre>
+        <pre><div class="java-code">
 public class MagicWand extends Item {
 
     public MagicWand() {
@@ -163,9 +423,65 @@ public class MagicWand extends Item {
         return RED_RARITY;
     }
 }
-        </pre></div>
+        </div></pre>
 
-        <h2>Adding Item Descriptions</h2>
+        <h2 id="description">Adding Item Descriptions</h2>
+
+        <p>You may have seen some mods add descriptions to items that can be seen when hovering over it:</p>
+        <p>This is known as a <i>tooltip</i>, and they're really simple to implement. To do so, you have to override the <code>addInformation()</code> method in your custom item class:</p>
+
+        <pre><div class="java-code">
+@Override
+public void addInformation(ItemStack stack, EntityPlayer player, List info, boolean isAdvanced) {
+    info.add("my item description");
+}
+        </div></pre>
+
+        <p>It's important to understand the parameters of this function. The first parameter is the <code>ItemStack</code> that the tooltip is displaying on. So if you have one item with different metadata, you'd check that through that first parameter.</p>
+        <p>The second parameter is the player that's checking the tooltip. This is useful for dynamic tooltips that change depending on the player's progression. For example, you could check if your player has a certain achievement unlocked, and display "???" if they don't. If they do, you can display some other form of text. You're allowed to use if-statements and checks in this function like normal, so any of that logic can be handled here.</p>
+
+        <p>The third parameter is a list of strings that will actually hold the item description. It's important to note that each call to <code>add()</code> represents a new line on the item's tooltip. If you add your whole description at once, it may create an extremely long and large tooltip box. This list also contains the <i>whole</i> tooltip, including the name of the item. So if you wanted to change the color of your item name without using the unsafe method, you could do it like this:</p>
+
+        <pre><div class="java-code">
+@Override
+public void addInformation(ItemStack stack, EntityPlayer player, List info, boolean isAdvanced) {
+    info.clear();
+    info.add(EnumChatFormatting.RED + "Magic Wand");
+}
+        </div></pre>
+
+        <p>So the first line clears the tooltip list (including the item's name), and the second line adds back the item's name in red. This is much safer than the other method, however it has it's own issues. For one, it makes it difficult to use one class to create multiple different items. In general you should use one class to create as many items as possible. If that's the case, you'd have to pass around some kind of "properName" variable so that each item made with that class has a different name. Also, whatever name you put here will override the name you put in your <code>en_US.lang</code> file. This sounds like a good thing because it prevents you from having to use the lang file, but in actuality the original name is still shown outside of the inventory if the lang file isn't used: </p>
+
+        <h2 id="dynamic">Dynamic descriptions</h2>
+        <p>A lot of mods like to make use of dynamic or changing item descriptions. One of the most common examples is an item that says "<i>Hold shift for info...</i>", and then when shift is held, it displays a more detailed description. This helps prevent items with long descriptions from having large unnecessary tooltips when the player does not need to see it. </p>
+
+        <p>The way to do this is with some simple checks in the <code>addInformation</code> method. A simple implementation of that kind of item would look like so:</p>
+
+        <pre><div class="java-code">
+@Override
+public void addInformation(ItemStack stack, EntityPlayer player, List info, boolean isAdvanced) {
+     if (!Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+    	info.add(EnumChatFormatting.DARK_GRAY + "Hold shift for info...");
+    } else {
+        info.add(EnumChatFormatting.GREEN + "A powerful wand from ancient times");
+    }
+}
+        </div></pre>
+
+        <p>So if the shift key is not held down, we display <i>"Hold shift for info..."</i>. If it <i>is</i> held down, we display our item's description. This can also be done with the control key or other keys. You can also check for multiple keys at once. In general any dynamic logic can be done in this method, because it's called every tick. </p>
+
+        <hr>
+        <h1 id="right-click">Add Right-Click Functionality</h1>
+        <p>In a lot of cases you'll want to give your item an actual use. Most commonly, you want it to do something when it right clicks, whether that be on a mob or a block or even just the air. There are multiple different methods for different functions of the item. Let's start with the most basic and simple one:</p>
+
+        <pre><div class="java-code">
+@Override
+public ItemStack onItemRightClick(ItemStack stack, World World, EntityPlayer player) {
+    player.addChatMessage(new ChatComponentText(player.getDisplayName() + " has used their wand!"));
+    return stack;
+}
+        </div></pre>
+        <p>The <code>onItemRightClick()</code> method is called any time the player is holding the item and they right click it. It can be clicking a block, mob, or nothing at all; This method will always fire. Above is a simple example where when the player right clicks with the wand in their hand it sends a chat message to them and them only that says "[USERNAME] has used their wand!". You can do anything you want in this method.</p>
         </div>
     </body>
 </html>
